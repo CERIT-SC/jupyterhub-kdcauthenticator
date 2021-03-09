@@ -144,13 +144,16 @@ class KDCAuthenticator(LocalAuthenticator):
             self.log.info("kerberos.authGSSServerInit")
             if rc != kerberos.AUTH_GSS_COMPLETE:
                 return None
-
-            rc = kerberos.authGSSServerStep(state, data)
+            
+            realm = os.environ.get('KERBEROS_REALM', None)
+            if not realm:
+                raise kerberos.GSSError("No realm set in environment variable KERBEROS_REALM")
+            rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm)
             self.log.info("kerberos.authGSSServerStep")
-            if rc == kerberos.AUTH_GSS_COMPLETE:
-                user = kerberos.authGSSServerUserName(state)
-                self.log.info("Extracted User = " + user)
-                return "kerberos.AUTH_GSS_COMPLETE:" + user
+             if rc == kerberos.AUTH_GSS_COMPLETE:
+                self.log.info("Extracted User = " + data['username'])
+                username = data['username'].split('@')[0]
+                return username
             elif rc == kerberos.AUTH_GSS_CONTINUE:
                 return "kerberos.AUTH_GSS_CONTINUE"
             else:
