@@ -15,6 +15,7 @@
 #
 
 import kerberos
+import os
 
 from tornado import gen, web
 from jupyterhub.handlers import BaseHandler
