@@ -153,8 +153,7 @@ class KDCAuthenticator(LocalAuthenticator):
             self.log.info("kerberos.authGSSServerStep")
             if rc == kerberos.AUTH_GSS_COMPLETE:
                 self.log.info("Extracted User = " + data['username'])
-                username = data['username'].split('@')[0]
-                return username
+                return data['username']
             elif rc == kerberos.AUTH_GSS_CONTINUE:
                 return "kerberos.AUTH_GSS_CONTINUE"
             else:
