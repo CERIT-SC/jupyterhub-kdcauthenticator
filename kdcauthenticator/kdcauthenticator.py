@@ -19,7 +19,7 @@ import os
 
 from tornado import gen, web
 from jupyterhub.handlers import BaseHandler
-from jupyterhub.auth import LocalAuthenticator
+from jupyterhub.auth import Authenticator
 from jupyterhub.utils import url_path_join
 from tornado import gen
 
@@ -106,7 +106,7 @@ class KDCCallbackHandler(BaseHandler):
         else:
             self._unauthorized()
 
-class KDCAuthenticator(LocalAuthenticator):
+class KDCAuthenticator(Authenticator):
     """
     Kerberos Authenticator for JupyterHub
     """
