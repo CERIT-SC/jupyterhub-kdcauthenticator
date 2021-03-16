@@ -149,7 +149,11 @@ class KDCAuthenticator(LocalAuthenticator):
             realm = os.environ.get('KERBEROS_REALM', None)
             if not realm:
                 raise kerberos.GSSError("No realm set in environment variable KERBEROS_REALM")
-            rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm)
+            try:
+                rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm)
+            except Exception as e:
+                self.log.info("checkPassword failed: {0}".format(e))
+                return None
             self.log.info("kerberos.authGSSServerStep")
             if rc == kerberos.AUTH_GSS_COMPLETE:
                 self.log.info("Extracted User = " + data['username'])
