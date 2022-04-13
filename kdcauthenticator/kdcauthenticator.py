@@ -114,6 +114,7 @@ class KDCAuthenticator(Authenticator):
     service_name = Unicode('HTTP',
                              help="This is a service principal"
                              ).tag(config=True)
+    refresh_pre_spawn = True
 
     def callback_url(self, base_url):
         return url_path_join(base_url, 'kdc_callback')
@@ -129,6 +130,18 @@ class KDCAuthenticator(Authenticator):
             (r'/kdc_login', self.login_handler),
             (r'/kdc_callback', self.callback_handler),
         ]
+
+    @gen.coroutine
+    def refresh_user(self, user, handler=None):
+        try:
+            realm = os.environ.get('KERBEROS_REALM', None)
+            self.log.info("Trying to refresh")
+            result = kerberos.renewCredentials(user.name, self.service_name, realm)
+            self.log.info(f"Refresh result: {result}")
+        except Exception as err:
+            self.log.info(f"ERROR: {err}")
+            return False
+        return True
 
     @gen.coroutine
     def authenticate(self, handler, data):
@@ -147,10 +160,12 @@ class KDCAuthenticator(Authenticator):
                 return None
             
             realm = os.environ.get('KERBEROS_REALM', None)
+            ticket_life = int(os.environ.get('KERBEROS_TICKET_LIFE', 28800))
+            renew_life = int(os.environ.get('KERBEROS_RENEW_LIFE', 604800))
             if not realm:
                 raise kerberos.GSSError("No realm set in environment variable KERBEROS_REALM")
             try:
-                rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm)
+                rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm, ticket_life=ticket_life, renew_life=renew_life)
             except Exception as e:
                 self.log.info("checkPassword failed: {0}".format(e))
                 return None
