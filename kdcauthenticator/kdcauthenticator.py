@@ -160,8 +160,8 @@ class KDCAuthenticator(Authenticator):
                 return None
             
             realm = os.environ.get('KERBEROS_REALM', None)
-            ticket_life = os.environ.get('KERBEROS_TICKET_LIFE', 28800)
-            renew_life = os.environ.get('KERBEROS_RENEW_LIFE', 604800)
+            ticket_life = int(os.environ.get('KERBEROS_TICKET_LIFE', 28800))
+            renew_life = int(os.environ.get('KERBEROS_RENEW_LIFE', 604800))
             if not realm:
                 raise kerberos.GSSError("No realm set in environment variable KERBEROS_REALM")
             try:
