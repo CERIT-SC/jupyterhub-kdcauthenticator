@@ -136,7 +136,7 @@ class KDCAuthenticator(Authenticator):
         try:
             realm = os.environ.get('KERBEROS_REALM', None)
             self.log.info("Trying to refresh")
-            result = kerberos.renewCredentials(user, self.service_name, realm)
+            result = kerberos.renewCredentials(user.name, self.service_name, realm)
             self.log.info(f"Refresh result: {result}")
         except Exception as err:
             self.log.info(f"ERROR: {err}")
