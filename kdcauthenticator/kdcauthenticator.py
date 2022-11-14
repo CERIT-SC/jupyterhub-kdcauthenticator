@@ -165,7 +165,7 @@ class KDCAuthenticator(Authenticator):
             if not realm:
                 raise kerberos.GSSError("No realm set in environment variable KERBEROS_REALM")
             try:
-                rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm, ticket_life=ticket_life, renew_life=renew_life)
+                rc = kerberos.checkPassword(data['username'], data['password'], self.service_name, realm)
             except Exception as e:
                 self.log.info("checkPassword failed: {0}".format(e))
                 return None
