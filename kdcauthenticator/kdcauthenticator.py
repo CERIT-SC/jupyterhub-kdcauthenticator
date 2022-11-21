@@ -114,7 +114,7 @@ class KDCAuthenticator(Authenticator):
     service_name = Unicode('HTTP',
                              help="This is a service principal"
                              ).tag(config=True)
-    refresh_pre_spawn = True
+    refresh_pre_spawn = False
 
     def callback_url(self, base_url):
         return url_path_join(base_url, 'kdc_callback')
@@ -137,7 +137,7 @@ class KDCAuthenticator(Authenticator):
             realm = os.environ.get('KERBEROS_REALM', None)
             self.log.info("Trying to refresh")
             result = kerberos.renewCredentials(user.name, self.service_name, realm)
-            self.log.info(f"Refresh result: {result}")
+            self.log.info(f"result: {result}")
         except Exception as err:
             self.log.info(f"ERROR: {err}")
             return False
