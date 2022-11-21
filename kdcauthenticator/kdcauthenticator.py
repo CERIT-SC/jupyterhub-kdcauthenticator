@@ -114,7 +114,7 @@ class KDCAuthenticator(Authenticator):
     service_name = Unicode('HTTP',
                              help="This is a service principal"
                              ).tag(config=True)
-    refresh_pre_spawn = False
+    refresh_pre_spawn = True
 
     def callback_url(self, base_url):
         return url_path_join(base_url, 'kdc_callback')
